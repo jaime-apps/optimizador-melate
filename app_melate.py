@@ -14,6 +14,16 @@ def iniciar_conexion():
 
 supabase = iniciar_conexion()
 
+# --- INICIALIZACIÓN DE MEMORIA (SESSION STATE) ---
+if 'usuario_autenticado' not in st.session_state:
+    st.session_state['usuario_autenticado'] = False
+
+if 'rol' not in st.session_state:
+    st.session_state['rol'] = None
+
+if 'username' not in st.session_state:
+    st.session_state['username'] = ""
+
 # --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Optimizador Melate", page_icon="🎱", layout="centered")
 
