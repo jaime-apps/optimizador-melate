@@ -86,9 +86,18 @@ if not st.session_state['usuario_autenticado']:
         user = st.text_input("Usuario")
         pwd = st.text_input("Contraseña", type="password")
         btn_login = st.form_submit_button("Entrar")
+        
         if btn_login:
-            iniciar_sesion(user, pwd)
-            st.rerun()
+            # Mandamos llamar a nuestra nueva bóveda en Supabase
+            rol_encontrado = validar_usuario(user, pwd)
+            
+            if rol_encontrado:
+                st.session_state['usuario_autenticado'] = True
+                st.session_state['rol'] = rol_encontrado
+                st.session_state['username'] = user
+                st.rerun() # Si todo está bien, recarga y te deja entrar
+            else:
+                st.error("Usuario o contraseña incorrectos. Intenta de nuevo.") # Mensaje de error si falla
     st.stop()
 
 # ==========================================
