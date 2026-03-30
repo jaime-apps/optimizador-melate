@@ -2,6 +2,17 @@ import streamlit as st
 import pandas as pd
 import random
 import datetime
+import numpy as np
+from supabase import create_client, Client
+
+# --- CONEXIÓN A LA BASE DE DATOS PROFESIONAL ---
+@st.cache_resource
+def iniciar_conexion():
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
+supabase = iniciar_conexion()
 
 # --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Optimizador Melate", page_icon="🎱", layout="centered")
@@ -35,29 +46,27 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# --- 1. SISTEMA DE LOGIN Y SESIONES ---
-# ==========================================
-if 'usuario_autenticado' not in st.session_state:
-    st.session_state['usuario_autenticado'] = False
-    st.session_state['tipo_cuenta'] = None
+# --- NUEVO MOTOR DE DATOS ---
+@st.cache_data(ttl=600) # Guarda los datos en memoria por 10 min para que sea súper rápido
+def cargar_datos():
+    # 1. Extraer los datos de la bóveda
+    respuesta = supabase.table("sorteos").select("*").order("concurso").execute()
+    
+    # 2. Convertirlos a Pandas (para que tu algoritmo estadístico siga funcionando intacto)
+    df = pd.DataFrame(respuesta.data)
+    
+    # 3. Poner las columnas en MAYÚSCULAS para que tu código actual no note la diferencia
+    df.columns = df.columns.str.upper()
+    return df
 
-def iniciar_sesion(usuario, password):
-    if usuario == "prueba" and password == "123":
-        st.session_state['usuario_autenticado'] = True
-        st.session_state['tipo_cuenta'] = 'Gratis'
-    elif usuario == "vip" and password == "pago":
-        st.session_state['usuario_autenticado'] = True
-        st.session_state['tipo_cuenta'] = 'Premium'
-    elif usuario == "jaime_admin" and password == "master":
-        st.session_state['usuario_autenticado'] = True
-        st.session_state['tipo_cuenta'] = 'Admin'
-    else:
-        st.error("Usuario o contraseña incorrectos.")
-
-def cerrar_sesion():
-    st.session_state['usuario_autenticado'] = False
-    st.session_state['tipo_cuenta'] = None
+# --- NUEVO SISTEMA DE USUARIOS REAL ---
+def validar_usuario(username, password):
+    # Busca en la bóveda si el usuario y la contraseña coinciden
+    respuesta = supabase.table("usuarios").select("*").eq("username", username).eq("password", password).execute()
+    
+    if len(respuesta.data) > 0:
+        return respuesta.data[0]["rol"] # Te devuelve 'Admin', 'Premium' o 'Gratis'
+    return None
 
 # --- PANTALLA DE LOGIN ---
 if not st.session_state['usuario_autenticado']:
