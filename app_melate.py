@@ -104,7 +104,7 @@ if not st.session_state['usuario_autenticado']:
 # --- 2. APLICACIÓN PRINCIPAL (La Bóveda) ---
 # ==========================================
 st.sidebar.title("🎱 Mi Cuenta")
-st.sidebar.info(f"Nivel Actual: **{st.session_state['tipo_cuenta']}**")
+st.sidebar.info(f"Nivel Actual: **{st.session_state['rol']}**")
 if st.sidebar.button("Cerrar Sesión"):
     cerrar_sesion()
     st.rerun()
@@ -174,7 +174,7 @@ if df_melate is not None:
 
 st.divider()
 
-if st.session_state['tipo_cuenta'] == 'Admin':
+if st.session_state['rol'] == 'Admin':
     tab_gen, tab_add, tab_stats = st.tabs(["🎯 Generador VIP", "➕ Admin: Sorteos", "📊 Análisis Estadístico"])
 else:
     tab_gen, tab_stats = st.tabs(["🎯 Generador VIP", "📊 Análisis Estadístico"])
@@ -191,7 +191,7 @@ with tab_gen:
         """)
         
     if df_melate is not None:
-        if st.session_state['tipo_cuenta'] == 'Gratis':
+        if st.session_state['rol'] == 'Gratis':
             st.warning("⚠️ Modo Prueba: Limitado a 1 boleto. ¡Actualiza tu cuenta para liberar el poder del algoritmo!")
             max_boletos = 1
         else:
