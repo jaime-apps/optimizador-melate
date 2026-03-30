@@ -78,6 +78,12 @@ def validar_usuario(username, password):
         return respuesta.data[0]["rol"] # Te devuelve 'Admin', 'Premium' o 'Gratis'
     return None
 
+def cerrar_sesion():
+    # Limpiamos la memoria para "cerrar la puerta"
+    st.session_state['usuario_autenticado'] = False
+    st.session_state['rol'] = None
+    st.session_state['username'] = ""
+
 # --- PANTALLA DE LOGIN ---
 if not st.session_state['usuario_autenticado']:
     st.title("🔒 Acceso al Optimizador Melate")
