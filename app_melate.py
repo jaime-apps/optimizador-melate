@@ -170,7 +170,7 @@ if df_melate is not None:
     m1, m2, m3 = st.columns(3)
     m1.metric(label="Sorteos Analizados", value=f"{len(df_melate):,}")
     m2.metric(label="Estado del Motor", value="Óptimo", delta="Activo")
-    m3.metric(label="Nivel de Acceso", value=st.session_state['tipo_cuenta'])
+    m3.metric(label="Nivel de Acceso", value=st.session_state['rol'])
 
 st.divider()
 
