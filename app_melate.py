@@ -106,6 +106,22 @@ if not st.session_state['usuario_autenticado']:
                 st.error("Usuario o contraseña incorrectos. Intenta de nuevo.") # Mensaje de error si falla
     st.stop()
 
+st.markdown("---")
+st.subheader("🚀 Desbloquea el Motor VIP")
+st.write("Deja de jugar a ciegas. Obtén acceso al filtro estadístico y generador de combinaciones Premium.")
+
+# Tu botón de venta
+st.markdown("""
+<a href="https://mpago.la/1hAQ3xr" target="_blank">
+    <button style="background-color:#009EE3; color:white; padding:10px 20px; border-radius:5px; border:none; font-weight:bold; cursor:pointer;">
+        👉 Suscribirse por $99/mes
+    </button>
+</a>
+""", unsafe_allow_html=True)
+
+st.info("📲 **¿Ya pagaste?** Envía tu comprobante por WhatsApp al **+52 7771049944** y te enviaremos tu Usuario y Contraseña VIP en menos de 10 minutos.")
+st.markdown("---")
+
 # ==========================================
 # --- 2. APLICACIÓN PRINCIPAL (La Bóveda) ---
 # ==========================================
