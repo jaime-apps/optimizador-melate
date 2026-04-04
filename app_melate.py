@@ -170,16 +170,31 @@ def generar_boletos(cantidad, df_historico, columnas_esferas):
     return boletos_aprobados, intentos
 
 def guardar_nuevo_sorteo(concurso, fecha, r1, r2, r3, r4, r5, r6, r7):
-    nuevo_registro = pd.DataFrame([{'CONCURSO': concurso, 'R1': r1, 'R2': r2, 'R3': r3, 'R4': r4, 'R5': r5, 'R6': r6, 'R7': r7, 'FECHA': fecha.strftime("%d/%m/%Y")}])
     try:
-        df_existente = pd.read_csv('melate.csv')
-        if concurso in df_existente['CONCURSO'].values: return False, "Ese concurso ya existe."
-        df_actualizado = pd.concat([nuevo_registro, df_existente], ignore_index=True)
-        df_actualizado.to_csv('melate.csv', index=False)
-        st.cache_data.clear()
-        return True, "¡Sorteo guardado!"
+        # 1. Empaquetamos los datos exactamente como Supabase los pide
+        nuevo_registro = {
+            "concurso": int(concurso),
+            "r1": int(r1),
+            "r2": int(r2),
+            "r3": int(r3),
+            "r4": int(r4),
+            "r5": int(r5),
+            "r6": int(r6),
+            "r7": int(r7),
+            "fecha": str(fecha) # Aseguramos formato de texto YYYY-MM-DD
+        }
+        
+        # 2. Enviamos los datos a la bóveda en la nube
+        supabase.table("sorteos").insert(nuevo_registro).execute()
+        
+        # 3. ¡Paso CRUCIAL! Le decimos a la app que olvide los datos viejos
+        st.cache_data.clear() 
+        
+        return True, f"✅ ¡Sorteo {concurso} guardado exitosamente en la nube!"
+        
     except Exception as e:
-        return False, f"Error al guardar: {e}"
+        # Si Supabase lo rechaza, esto nos dirá por qué (ej. concurso repetido)
+        return False, f"❌ Error de base de datos: {str(e)}"
 
 # --- INTERFAZ DEL DASHBOARD ---
 st.title("🎱 Optimizador Estadístico Melate")
